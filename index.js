@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const app = express()
 mongoose.set('strictQuery',false)
-app.use(cors({origin:'http://localhost:3000'}))
+
 app.use(express.static(path.join(__dirname, 'frontend')))
 
 app.get('/', (req, res) => {
