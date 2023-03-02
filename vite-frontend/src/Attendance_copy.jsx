@@ -77,7 +77,8 @@ export const Attendance_copy = () => {
         hiddenElement.target = '_blank';
 
         //provide the name for the CSV file to be downloaded  
-        hiddenElement.download = `${Date.now().toLocaleString()}_it2.csv`;
+        console.log('CBIT-'+new Date().toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}))
+        hiddenElement.download = 'CBIT-'+new Date().toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"});
         hiddenElement.click();
 
     }

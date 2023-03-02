@@ -15,4 +15,4 @@ const studentSchema=new mongoose.Schema(
     }
 )
 
-module.exports=mongoose.model('studentModel',studentSchema,'it2')
+module.exports=mongoose.model('studentModel',studentSchema,'bz')
