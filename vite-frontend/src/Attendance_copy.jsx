@@ -85,7 +85,7 @@ export const Attendance_copy = () => {
     }
     function fetch(sec) {
 
-        axios.get('http://localhost:5000/it2')
+        axios.get('/it2')
             .then((result) => {
                 console.log(result.data.length);
                 setData(result.data)
