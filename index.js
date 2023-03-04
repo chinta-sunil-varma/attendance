@@ -2,6 +2,7 @@ const express = require('express');
 const model = require('./models');
 const dotenv = require('dotenv');
 const cors = require('cors');
+
 dotenv.config()
 
 const mongoose = require('mongoose');
@@ -10,6 +11,7 @@ const app = express()
 mongoose.set('strictQuery',false)
 
 app.use(express.static(path.join(__dirname, 'frontend')))
+
 
 app.get('/', (req, res) => {
     res.render(path.join(__dirname, 'frontend', 'index.html'))
