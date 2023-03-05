@@ -42,27 +42,23 @@ function reducing(state, action) {
         case 'update':
             return state.map((item) => {
                 console.log('heh outside id ', item.ID);
-                var temp = {};
-                if (item.heheboi) {
-                    temp = item;
-                }
-                console.log(temp)
+               
 
                 if (item.ID == action.payload.ID) {
                     console.log('match found!');
 
                     switch (item.STATUS) {
                         case 'P':
-                            temp.pcount -= 1;
+                            state[0].pcount -= 1;
                             break;
                         case 'PR':
-                            temp.prcount -= 1;
+                            state[0].prcount -= 1;
                             break;
                         case 'A':
-                            temp.acount -= 1;
+                            state[0].acount -= 1;
                             break;
                         case 'L':
-                            temp.lcount -= 1;
+                            state[0].lcount -= 1;
                             break;
 
 
@@ -70,27 +66,21 @@ function reducing(state, action) {
 
                     switch (action.payload.STATUS) {
                         case 'P':
-                            temp.pcount += 1;
+                            state[0].pcount += 1;
                             break;
                         case 'PR':
-                            temp.prcount += 1;
+                            state[0].prcount += 1;
                             break;
                         case 'A':
-                            temp.acount += 1;
+                            state[0].acount += 1;
                             break;
                         case 'L':
-                            temp.lcount += 1;
+                            state[0].lcount += 1;
                             break;
 
 
                     }
-                    state.map((item) => {
-                        if (item.heheboi) {
-                            return temp
-                        }
-                        return item;
-
-                    })
+                   
 
 
 
