@@ -4,6 +4,7 @@ import { Button, Paper, Typography, Card, CardActions, CardContent, Box, Select,
 // import {DesktopDatePicker} from '@mui/x-date-pickers/DesktopDatePicker'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import Donot from './Donot';
 
 function reducing(state, action) {
     switch (action.type) {
@@ -34,7 +35,7 @@ export const Attendance_copy = () => {
     const [state, dispatcher] = React.useReducer(reducing, [])
 
     console.log(course);
-    console.log('state herhe',state);
+    console.log('state herhe', state);
     // React.useEffect(, [])
 
     function handleClick(e) {
@@ -86,7 +87,7 @@ export const Attendance_copy = () => {
     }
     function fetch(sec) {
 
-        axios.get('/it2')
+        axios.get('http://localhost:5000/it2')
             .then((result) => {
                 console.log(result.data.length);
                 setData(result.data)
@@ -140,9 +141,9 @@ export const Attendance_copy = () => {
                 <>
                     {alert.status ? <Alert onClose={() => { setAlert(false) }}>{alert.message}</Alert> : null}
 
-                    <Paper elevation={3} sx={{ display: 'flex', justifyContent: 'center', fontFamily: ' Gemunu Libre', fontSize: '120%' ,backgroundColor:'#0E8388'}}>
+                    <Paper elevation={3} sx={{ display: 'flex', justifyContent: 'center', fontFamily: ' Gemunu Libre', fontSize: '120%', backgroundColor: '#EEEEEE' }}>
                         <Card  >
-                            <CardContent sx={{ fontFamily: ' sans-serif', fontSize: '120%',backgroundColor:'#CBE4DE' }} >
+                            <CardContent sx={{ fontFamily: ' sans-serif', fontSize: '120%', backgroundColor: '#CBE4DE' }} >
                                 <Box display={'flex'} justifyContent={'space-between'}>
                                     <span>{data[init]['ID']}</span>
                                     <span>{init}/{data.length}</span>
@@ -161,38 +162,42 @@ export const Attendance_copy = () => {
 
                         {/* <Button onClick={upload_attend}> upload Attendance</Button> */}
 
-                       
+
+                        <Box sx={{ position: 'relative', height: '40vh', width: '40vw' }}>
+
+                            <Donot></Donot>
+                        </Box>
                     </Paper>
-                    <Button variant='contained' sx={{ display: 'block'  }} onClick={download_csv}>Download CSV</Button>
+                    <center> <Button variant='contained' sx={{ backgroundColor: '#827397' }} onClick={download_csv}>Download CSV</Button></center>
+
+
                     <Typography fontFamily={'cursive'} variant='h4' display='flex' justifyContent={'center'}> ABSENTEES</Typography>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', height: '450px', backgroundColor:'#2E4F4F',color:'whitesmoke' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', height: '450px', backgroundColor: '#2E4F4F', color: 'whitesmoke' }}>
                         {state.map((item) => {
                             if (item.STATUS === 'A') {
 
                                 return <>
-                                    <Typography sx={{ display: 'inline',fontFamily:'sans-serif' }}>{item.NAME}
+                                    <Typography sx={{ display: 'inline', fontFamily: 'sans-serif' }}>{item.NAME}
 
                                         <ToggleButton
                                             value="check"
 
                                             onChange={() => {
-                                                state.map((obj)=>
-                                                {
-                                                    if(obj.ID==item.ID)
-                                                    {
-                                                        dispatcher({type:'update',payload:{ID:obj.ID,'STATUS':'p'}})
+                                                state.map((obj) => {
+                                                    if (obj.ID == item.ID) {
+                                                        dispatcher({ type: 'update', payload: { ID: obj.ID, 'STATUS': 'p' } })
                                                     }
                                                 })
                                             }}
                                             aria-label='remove this entry'
                                             title='remove this entry'
-                                            
+
                                             sx={{
                                                 width: '5px',
 
                                             }}
                                         >
-                                            <DeleteForeverIcon sx={{color:'wheat'}} />
+                                            <DeleteForeverIcon sx={{ color: 'wheat' }} />
                                         </ToggleButton>
                                     </Typography>
 
@@ -202,12 +207,12 @@ export const Attendance_copy = () => {
                                 </>
                             }
                         })}</Box>
-                    <Typography  variant='h4' fontFamily={'cursive'} display={'flex'} justifyContent={'center'}> Edit here</Typography>
+                    <Typography variant='h4' fontFamily={'cursive'} display={'flex'} justifyContent={'center'}> Edit here</Typography>
                     <br />
                     <Box sx={{
                         overflow: 'scroll',
                         height: '500px',
-                        backgroundColor:'#18122B'
+                        backgroundColor: '#18122B'
                     }}>
                         {state.map((item) => {
 
@@ -216,10 +221,10 @@ export const Attendance_copy = () => {
                             return <Box sx={{
                                 display: 'flex', justifyContent: 'center',
                                 overflow: 'scroll',
-                              
 
 
-                            }} > <Accordion sx={{ width: '50%',  backgroundColor:'#635985' }}>
+
+                            }} > <Accordion sx={{ width: '50%', backgroundColor: '#635985' }}>
                                     <AccordionSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         aria-controls="panel1a-content"
@@ -229,11 +234,11 @@ export const Attendance_copy = () => {
                                         <Typography color={'#FAFFAF'}>{item.NAME}-</Typography>
                                         <Typography>{item.STATUS}</Typography>
                                     </AccordionSummary>
-                                    <AccordionDetails sx={{display:'flex',justifyContent:'space-evenly'}}>
-                                        
+                                    <AccordionDetails sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
+
                                         <input onClick={handleSubmit} value='P' type={'radio'} name={item.ID} checked={item.STATUS == 'P' ? true : false} />
                                         <Typography variant='body2'
-                                            sx={{ fontFamily: 'sans-serif', fontSize: '120%', display: 'inline-block'  }}
+                                            sx={{ fontFamily: 'sans-serif', fontSize: '120%', display: 'inline-block' }}
                                         >PRESENT</Typography>
 
                                         <input onClick={handleSubmit} value='A' type={'radio'} name={item.ID} checked={item.STATUS == 'A' ? true : false} />
