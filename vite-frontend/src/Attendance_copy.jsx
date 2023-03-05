@@ -276,12 +276,18 @@ export const Attendance_copy = () => {
 
 
                     <Typography fontFamily={'cursive'} variant='h4' display='flex' justifyContent={'center'}> ABSENTEES</Typography>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', height: '450px', backgroundColor: '#2E4F4F', color: 'whitesmoke' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', backgroundColor: '#2E4F4F', color: 'whitesmoke' }}>
                         {state.map((item) => {
                             if (item.STATUS === 'A') {
 
                                 return <>
-                                    <Box>
+                                
+                                    <Box display={'flex'} justifyContent={'space-evenly'} alignItems={'center'} color={'whitesmoke'} borderColor={'black'} height='25%'
+                                    
+                                    backgroundColor={"#" + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0').toUpperCase()}
+                                    margin='0.4%'
+                                    
+                                    >
                                         <Typography sx={{ display: 'inline', fontFamily: 'sans-serif' }}>{item.NAME}
 
 
@@ -315,6 +321,7 @@ export const Attendance_copy = () => {
                                 </>
                             }
                         })}</Box>
+                        <hr />
                     <Typography variant='h4' fontFamily={'cursive'} display={'flex'} justifyContent={'center'}> Edit here</Typography>
                     <br />
                     <Box sx={{
