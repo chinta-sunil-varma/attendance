@@ -7,6 +7,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
+// import Down from './assets/down.svg'
 ChartJS.register(ArcElement, Tooltip, Legend);
 // import Donot from './Donot';
 
@@ -123,19 +124,17 @@ export const Attendance_copy = () => {
 
                 data: [result['acount'], result.pcount, result.lcount, result.prcount],
                 backgroundColor: [
-                    'rgba(255, 99, 132)',
-                    'rgba(54, 162, 235)',
-                    'rgba(255, 206, 86)',
-                    'rgba(75, 192, 192)',
+                    '#0D0221',
+                    '#CBC0AD',
+                    '#26408B',
+                    '#A6CFD5',
 
                 ],
                 borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)',
+                    '#0D0221',
+                    '#CBC0AD',
+                    '#26408B',
+                    '#A6CFD5',
                 ],
                 borderWidth: 1,
             },
@@ -190,8 +189,8 @@ export const Attendance_copy = () => {
 
     }
     function fetch(sec) {
-
-        axios.get('http://localhost:5000/it2')
+          // http://localhost:5000/it2
+        axios.get('/it2')
             .then((result) => {
                 console.log(result.data.length);
                 setData(result.data)
@@ -329,6 +328,8 @@ export const Attendance_copy = () => {
                         height: '500px',
                         backgroundColor: '#18122B'
                     }}>
+
+
                         {state.map((item) => {
                             if (item.heheboi) {
 
