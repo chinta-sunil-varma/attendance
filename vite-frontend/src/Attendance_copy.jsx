@@ -4,18 +4,95 @@ import { Button, Paper, Typography, Card, CardActions, CardContent, Box, Select,
 // import {DesktopDatePicker} from '@mui/x-date-pickers/DesktopDatePicker'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import Donot from './Donot';
+
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Doughnut } from 'react-chartjs-2';
+ChartJS.register(ArcElement, Tooltip, Legend);
+// import Donot from './Donot';
+
+
+
 
 function reducing(state, action) {
     switch (action.type) {
         case 'add':
+            state.map((item) => {
+                if (item.heheboi) {
+                    switch (action.payload.STATUS) {
+                        case 'P':
+                            item.pcount += 1;
+                            break;
+                        case 'PR':
+                            item.prcount += 1;
+                            break;
+                        case 'A':
+                            item.acount += 1;
+                            break;
+                        case 'L':
+                            item.lcount += 1;
+                            break;
+
+
+                    }
+                    return item;
+                }
+            })
             return [...state, action.payload]
         case 'update':
             return state.map((item) => {
                 console.log('heh outside id ', item.ID);
+                var temp = {};
+                if (item.heheboi) {
+                    temp = item;
+                }
+                console.log(temp)
 
                 if (item.ID == action.payload.ID) {
                     console.log('match found!');
+
+                    switch (item.STATUS) {
+                        case 'P':
+                            temp.pcount -= 1;
+                            break;
+                        case 'PR':
+                            temp.prcount -= 1;
+                            break;
+                        case 'A':
+                            temp.acount -= 1;
+                            break;
+                        case 'L':
+                            temp.lcount -= 1;
+                            break;
+
+
+                    }
+
+                    switch (action.payload.STATUS) {
+                        case 'P':
+                            temp.pcount += 1;
+                            break;
+                        case 'PR':
+                            temp.prcount += 1;
+                            break;
+                        case 'A':
+                            temp.acount += 1;
+                            break;
+                        case 'L':
+                            temp.lcount += 1;
+                            break;
+
+
+                    }
+                    state.map((item) => {
+                        if (item.heheboi) {
+                            return temp
+                        }
+                        return item;
+
+                    })
+
+
+
                     return { ...item, STATUS: action.payload.STATUS }
                 }
                 return item
@@ -31,12 +108,39 @@ export const Attendance_copy = () => {
 
     const [limit, setLimit] = React.useState(true)
     const [init, setInit] = React.useState(0)
-    const [course, setCourse] = React.useState(false)
-    const [state, dispatcher] = React.useReducer(reducing, [])
+    // const [course, setCourse] = React.useState(false)
+    const [state, dispatcher] = React.useReducer(reducing, [{ 'heheboi': true, 'acount': 0, 'pcount': 0, 'prcount': 0, 'lcount': 0 }])
 
-    console.log(course);
+    // console.log(course);
     console.log('state herhe', state);
     // React.useEffect(, [])
+    const result = state[0]
+    const dataChart = {
+        labels: ['Absent', 'Present', 'Late', 'Permission'],
+        datasets: [
+            {
+                label: 'no of Students',
+
+                data: [result['acount'], result.pcount, result.lcount, result.prcount],
+                backgroundColor: [
+                    'rgba(255, 99, 132)',
+                    'rgba(54, 162, 235)',
+                    'rgba(255, 206, 86)',
+                    'rgba(75, 192, 192)',
+
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
 
     function handleClick(e) {
         const { value } = e.target
@@ -165,7 +269,7 @@ export const Attendance_copy = () => {
 
                         <Box sx={{ position: 'relative', height: '40vh', width: '40vw' }}>
 
-                            <Donot></Donot>
+                            <Doughnut data={dataChart} width={'200px'} height={'200px'} options={{ maintainAspectRatio: false }} />
                         </Box>
                     </Paper>
                     <center> <Button variant='contained' sx={{ backgroundColor: '#827397' }} onClick={download_csv}>Download CSV</Button></center>
@@ -177,11 +281,14 @@ export const Attendance_copy = () => {
                             if (item.STATUS === 'A') {
 
                                 return <>
-                                    <Typography sx={{ display: 'inline', fontFamily: 'sans-serif' }}>{item.NAME}
+                                    <Box>
+                                        <Typography sx={{ display: 'inline', fontFamily: 'sans-serif' }}>{item.NAME}
 
+
+                                        </Typography>
                                         <ToggleButton
                                             value="check"
-
+                                            
                                             onChange={() => {
                                                 state.map((obj) => {
                                                     if (obj.ID == item.ID) {
@@ -194,12 +301,13 @@ export const Attendance_copy = () => {
 
                                             sx={{
                                                 width: '5px',
+                                                marginLeft:'10px'
 
                                             }}
                                         >
-                                            <DeleteForeverIcon sx={{ color: 'wheat' }} />
+                                            <DeleteForeverIcon  sx={{ color: 'wheat' , border:'0px' }} />
                                         </ToggleButton>
-                                    </Typography>
+                                    </Box>
 
 
 
@@ -215,48 +323,51 @@ export const Attendance_copy = () => {
                         backgroundColor: '#18122B'
                     }}>
                         {state.map((item) => {
+                            if (item.heheboi) {
+
+                            } else {
+
+
+                                return <Box sx={{
+                                    display: 'flex', justifyContent: 'center',
+                                    overflow: 'scroll',
 
 
 
-                            return <Box sx={{
-                                display: 'flex', justifyContent: 'center',
-                                overflow: 'scroll',
+                                }} > <Accordion sx={{ width: '50%', backgroundColor: '#635985' }}>
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="panel1a-content"
+                                            id="panel1a-header"
+                                        >
+                                            <Typography color={'#C4DDFF'}>{item.ID}-</Typography>
+                                            <Typography color={'#FAFFAF'}>{item.NAME}-</Typography>
+                                            <Typography>{item.STATUS}</Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
 
+                                            <input onClick={handleSubmit} value='P' type={'radio'} name={item.ID} checked={item.STATUS == 'P' ? true : false} />
+                                            <Typography variant='body2'
+                                                sx={{ fontFamily: 'sans-serif', fontSize: '120%', display: 'inline-block' }}
+                                            >PRESENT</Typography>
 
+                                            <input onClick={handleSubmit} value='A' type={'radio'} name={item.ID} checked={item.STATUS == 'A' ? true : false} />
+                                            <Typography variant='body2'
+                                                sx={{ fontFamily: ' sans-serif', fontSize: '120%', display: 'inline-block' }}
+                                            >ABSENT</Typography>
 
-                            }} > <Accordion sx={{ width: '50%', backgroundColor: '#635985' }}>
-                                    <AccordionSummary
-                                        expandIcon={<ExpandMoreIcon />}
-                                        aria-controls="panel1a-content"
-                                        id="panel1a-header"
-                                    >
-                                        <Typography color={'#C4DDFF'}>{item.ID}-</Typography>
-                                        <Typography color={'#FAFFAF'}>{item.NAME}-</Typography>
-                                        <Typography>{item.STATUS}</Typography>
-                                    </AccordionSummary>
-                                    <AccordionDetails sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
-
-                                        <input onClick={handleSubmit} value='P' type={'radio'} name={item.ID} checked={item.STATUS == 'P' ? true : false} />
-                                        <Typography variant='body2'
-                                            sx={{ fontFamily: 'sans-serif', fontSize: '120%', display: 'inline-block' }}
-                                        >PRESENT</Typography>
-
-                                        <input onClick={handleSubmit} value='A' type={'radio'} name={item.ID} checked={item.STATUS == 'A' ? true : false} />
-                                        <Typography variant='body2'
-                                            sx={{ fontFamily: ' sans-serif', fontSize: '120%', display: 'inline-block' }}
-                                        >ABSENT</Typography>
-
-                                        <input onClick={handleSubmit} value='L' type={'radio'} name={item.ID} checked={item.STATUS == 'L' ? true : false} />
-                                        <Typography variant='body2'
-                                            sx={{ fontFamily: '  sans-serif', fontSize: '120%', display: 'inline-block' }}
-                                        >LATE</Typography>
-                                        <input onClick={handleSubmit} value='PR' type={'radio'} name={item.ID} checked={item.STATUS == 'PR' ? true : false} />
-                                        <Typography variant='body2'
-                                            sx={{ fontFamily: ' sans-serif', fontSize: '120%', display: 'inline-block' }}
-                                        >PERMISSION</Typography>
-                                    </AccordionDetails>
-                                </Accordion>
-                            </Box>
+                                            <input onClick={handleSubmit} value='L' type={'radio'} name={item.ID} checked={item.STATUS == 'L' ? true : false} />
+                                            <Typography variant='body2'
+                                                sx={{ fontFamily: '  sans-serif', fontSize: '120%', display: 'inline-block' }}
+                                            >LATE</Typography>
+                                            <input onClick={handleSubmit} value='PR' type={'radio'} name={item.ID} checked={item.STATUS == 'PR' ? true : false} />
+                                            <Typography variant='body2'
+                                                sx={{ fontFamily: ' sans-serif', fontSize: '120%', display: 'inline-block' }}
+                                            >PERMISSION</Typography>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                </Box>
+                            }
 
 
 
