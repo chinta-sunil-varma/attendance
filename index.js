@@ -11,7 +11,11 @@ const app = express()
 mongoose.set('strictQuery',false)
 
 app.use(express.static(path.join(__dirname, 'frontend')))
-
+app.use(cors(
+    {
+        origin:'http://127.0.0.1:5173'
+    }
+))
 
 app.get('/', (req, res) => {
     res.render(path.join(__dirname, 'frontend', 'index.html'))

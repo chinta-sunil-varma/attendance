@@ -1,8 +1,9 @@
 import React from 'react'
 import axios from 'axios'
-import { Button, Paper, Typography, Card, CardActions, CardContent, Box, Select, Alert, Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
+import { Button, Paper, Typography, Card, CardActions, CardContent, Box, Select, Alert, Accordion, AccordionSummary, AccordionDetails, Stack, ToggleButton } from '@mui/material'
 // import {DesktopDatePicker} from '@mui/x-date-pickers/DesktopDatePicker'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 function reducing(state, action) {
     switch (action.type) {
@@ -33,7 +34,7 @@ export const Attendance_copy = () => {
     const [state, dispatcher] = React.useReducer(reducing, [])
 
     console.log(course);
-    console.log(state);
+    console.log('state herhe',state);
     // React.useEffect(, [])
 
     function handleClick(e) {
@@ -139,9 +140,9 @@ export const Attendance_copy = () => {
                 <>
                     {alert.status ? <Alert onClose={() => { setAlert(false) }}>{alert.message}</Alert> : null}
 
-                    <Paper elevation={3} sx={{ display: 'flex', justifyContent: 'center', fontFamily: ' Gemunu Libre', fontSize: '120%' }}>
+                    <Paper elevation={3} sx={{ display: 'flex', justifyContent: 'center', fontFamily: ' Gemunu Libre', fontSize: '120%' ,backgroundColor:'#0E8388'}}>
                         <Card  >
-                            <CardContent sx={{ fontFamily: ' Gemunu Libre', fontSize: '120%' }} >
+                            <CardContent sx={{ fontFamily: ' sans-serif', fontSize: '120%',backgroundColor:'#CBE4DE' }} >
                                 <Box display={'flex'} justifyContent={'space-between'}>
                                     <span>{data[init]['ID']}</span>
                                     <span>{init}/{data.length}</span>
@@ -157,80 +158,103 @@ export const Attendance_copy = () => {
                                 <Button name='Permission' value='PR' onClick={handleClick} disabled={limit ? false : true}>Permission</Button>
                             </CardActions>
                         </Card>
-                       
+
                         {/* <Button onClick={upload_attend}> upload Attendance</Button> */}
 
-                        <Button sx={{display:'block'}} onClick={download_csv}>Download CSV</Button>
+                       
                     </Paper>
-                    
-                    <Typography variant='h4' display='flex' justifyContent={'center'}> Absentees here</Typography>
-                    <Box sx={{ display: 'flex',alignItems:'center', flexDirection: 'column', flexWrap: 'wrap', height: '250px' }}>
+                    <Button variant='contained' sx={{ display: 'block'  }} onClick={download_csv}>Download CSV</Button>
+                    <Typography fontFamily={'cursive'} variant='h4' display='flex' justifyContent={'center'}> ABSENTEES</Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', height: '450px', backgroundColor:'#2E4F4F',color:'whitesmoke' }}>
                         {state.map((item) => {
                             if (item.STATUS === 'A') {
-                                return <Typography>{item.NAME}</Typography>
+
+                                return <>
+                                    <Typography sx={{ display: 'inline',fontFamily:'sans-serif' }}>{item.NAME}
+
+                                        <ToggleButton
+                                            value="check"
+
+                                            onChange={() => {
+                                                state.map((obj)=>
+                                                {
+                                                    if(obj.ID==item.ID)
+                                                    {
+                                                        dispatcher({type:'update',payload:{ID:obj.ID,'STATUS':'p'}})
+                                                    }
+                                                })
+                                            }}
+                                            aria-label='remove this entry'
+                                            title='remove this entry'
+                                            
+                                            sx={{
+                                                width: '5px',
+
+                                            }}
+                                        >
+                                            <DeleteForeverIcon sx={{color:'wheat'}} />
+                                        </ToggleButton>
+                                    </Typography>
+
+
+
+
+                                </>
                             }
                         })}</Box>
-                    <Typography variant='h4' display={'flex'} justifyContent={'center'}> Edit here</Typography>
+                    <Typography  variant='h4' fontFamily={'cursive'} display={'flex'} justifyContent={'center'}> Edit here</Typography>
                     <br />
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'column', height: '900px' }}>
+                    <Box sx={{
+                        overflow: 'scroll',
+                        height: '500px',
+                        backgroundColor:'#18122B'
+                    }}>
                         {state.map((item) => {
-                            return <Paper sx={{display:'flex',justifyContent:'center'}} elivation={2} key={item.ID}>
-                                {/* <Typography sx={{ display: 'inline-block', color: 'salmon' }}>{item.ID}-</Typography>
-                                <Typography sx={{ display: 'inline-block', color: 'blue' }}>{item.NAME}-</Typography>
-                                <Typography sx={{ display: 'inline-block', marginRight: '20px', color: 'red' }}>{item.STATUS}</Typography>
-                                <input onClick={handleSubmit} value='P' type={'radio'} name={item.ID} checked={item.STATUS == 'P' ? true : false} />
-                                <Typography variant='body2'
-                                    sx={{ fontFamily: ' Gemunu Libre', fontSize: '120%', display: 'inline-block' }}
-                                >present</Typography>
 
-                                <input onClick={handleSubmit} value='A' type={'radio'} name={item.ID} checked={item.STATUS == 'A' ? true : false} />
-                                <Typography variant='body2'
-                                    sx={{ fontFamily: ' Gemunu Libre', fontSize: '120%', display: 'inline-block' }}
-                                >absent</Typography>
 
-                                <input onClick={handleSubmit} value='L' type={'radio'} name={item.ID} checked={item.STATUS == 'L' ? true : false} />
-                                <Typography variant='body2'
-                                    sx={{ fontFamily: ' Gemunu Libre', fontSize: '120%', display: 'inline-block' }}
-                                >late</Typography>
-                                <input onClick={handleSubmit} value='PR' type={'radio'} name={item.ID} checked={item.STATUS == 'PR' ? true : false} />
-                                <Typography variant='body2'
-                                    sx={{ fontFamily: ' Gemunu Libre', fontSize: '120%', display: 'inline-block' }}
-                                >Permission</Typography> */}
 
-                                <Accordion sx={{width:'50%'}}>
+                            return <Box sx={{
+                                display: 'flex', justifyContent: 'center',
+                                overflow: 'scroll',
+                              
+
+
+                            }} > <Accordion sx={{ width: '50%',  backgroundColor:'#635985' }}>
                                     <AccordionSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         aria-controls="panel1a-content"
                                         id="panel1a-header"
                                     >
-                                        <Typography>{item.ID}-</Typography>
-                                        <Typography>{item.NAME}-</Typography>
+                                        <Typography color={'#C4DDFF'}>{item.ID}-</Typography>
+                                        <Typography color={'#FAFFAF'}>{item.NAME}-</Typography>
                                         <Typography>{item.STATUS}</Typography>
                                     </AccordionSummary>
-                                    <AccordionDetails>
-                                    <input onClick={handleSubmit} value='P' type={'radio'} name={item.ID} checked={item.STATUS == 'P' ? true : false} />
-                                <Typography variant='body2'
-                                    sx={{ fontFamily: ' Gemunu Libre', fontSize: '120%', display: 'inline-block' }}
-                                >present</Typography>
+                                    <AccordionDetails sx={{display:'flex',justifyContent:'space-evenly'}}>
+                                        
+                                        <input onClick={handleSubmit} value='P' type={'radio'} name={item.ID} checked={item.STATUS == 'P' ? true : false} />
+                                        <Typography variant='body2'
+                                            sx={{ fontFamily: 'sans-serif', fontSize: '120%', display: 'inline-block'  }}
+                                        >PRESENT</Typography>
 
-                                <input onClick={handleSubmit} value='A' type={'radio'} name={item.ID} checked={item.STATUS == 'A' ? true : false} />
-                                <Typography variant='body2'
-                                    sx={{ fontFamily: ' Gemunu Libre', fontSize: '120%', display: 'inline-block' }}
-                                >absent</Typography>
+                                        <input onClick={handleSubmit} value='A' type={'radio'} name={item.ID} checked={item.STATUS == 'A' ? true : false} />
+                                        <Typography variant='body2'
+                                            sx={{ fontFamily: ' sans-serif', fontSize: '120%', display: 'inline-block' }}
+                                        >ABSENT</Typography>
 
-                                <input onClick={handleSubmit} value='L' type={'radio'} name={item.ID} checked={item.STATUS == 'L' ? true : false} />
-                                <Typography variant='body2'
-                                    sx={{ fontFamily: ' Gemunu Libre', fontSize: '120%', display: 'inline-block' }}
-                                >late</Typography>
-                                <input onClick={handleSubmit} value='PR' type={'radio'} name={item.ID} checked={item.STATUS == 'PR' ? true : false} />
-                                <Typography variant='body2'
-                                    sx={{ fontFamily: ' Gemunu Libre', fontSize: '120%', display: 'inline-block' }}
-                                >Permission</Typography>
+                                        <input onClick={handleSubmit} value='L' type={'radio'} name={item.ID} checked={item.STATUS == 'L' ? true : false} />
+                                        <Typography variant='body2'
+                                            sx={{ fontFamily: '  sans-serif', fontSize: '120%', display: 'inline-block' }}
+                                        >LATE</Typography>
+                                        <input onClick={handleSubmit} value='PR' type={'radio'} name={item.ID} checked={item.STATUS == 'PR' ? true : false} />
+                                        <Typography variant='body2'
+                                            sx={{ fontFamily: ' sans-serif', fontSize: '120%', display: 'inline-block' }}
+                                        >PERMISSION</Typography>
                                     </AccordionDetails>
                                 </Accordion>
+                            </Box>
 
 
-                            </Paper>
+
 
                         })}
                     </Box>
