@@ -64,7 +64,7 @@ function reducing(state, action) {
 
                     }
 
-                    switch (action.payload.STATUS) {
+                    switch (action.payload.STATUS.toUpperCase()) {
                         case 'P':
                             state[0].pcount += 1;
                             break;
@@ -149,6 +149,7 @@ export const Attendance_copy = () => {
         console.log(e.target.name);
         console.log(e.target.value);
         const { name, value } = e.target
+        console.log('value here',value)
         dispatcher({ type: 'update', payload: { ID: name, STATUS: value } })
 
     }
@@ -287,7 +288,7 @@ export const Attendance_copy = () => {
                                             onChange={() => {
                                                 state.map((obj) => {
                                                     if (obj.ID == item.ID) {
-                                                        dispatcher({ type: 'update', payload: { ID: obj.ID, 'STATUS': 'p' } })
+                                                        dispatcher({ type: 'update', payload: { ID: obj.ID, 'STATUS': 'P' } })
                                                     }
                                                 })
                                             }}
