@@ -4,13 +4,14 @@ import { Button, Paper, Typography, Card, CardActions, CardContent, Box, Select,
 // import {DesktopDatePicker} from '@mui/x-date-pickers/DesktopDatePicker'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { useLocation } from 'react-router-dom';
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 // import Down from './assets/down.svg'
 ChartJS.register(ArcElement, Tooltip, Legend);
 // import Donot from './Donot';
-
+axios.defaults.withCredentials = true;
 
 
 
@@ -96,7 +97,8 @@ export const Attendance_copy = () => {
 
     const [data, setData] = React.useState(false)
     const [alert, setAlert] = React.useState({ status: false, message: '' })
-
+    const nav=useLocation()
+    console.log('hi in attenddance');
     const [limit, setLimit] = React.useState(true)
     const [init, setInit] = React.useState(0)
     // const [course, setCourse] = React.useState(false)
@@ -181,9 +183,9 @@ export const Attendance_copy = () => {
     }
     function fetch(sec) {
           // http://localhost:5000/it2
-        axios.get('/it2')
+        axios.post('http://localhost:5000/total',{section:nav.state.section})
             .then((result) => {
-                console.log(result.data.length);
+                console.log('data herer',result.data);
                 setData(result.data)
 
             }).catch((err) => {
