@@ -55,7 +55,7 @@ const classSchema=new mongoose.Schema(
         {
             required:true,
             type:String,
-            unique:true
+            
         },
         uid:
         {

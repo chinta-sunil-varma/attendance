@@ -182,8 +182,8 @@ export const Attendance_copy = () => {
 
     }
     function fetch(sec) {
-          // http://localhost:5000/it2
-        axios.post('http://localhost:5000/total',{section:nav.state.section})
+          // /api/it2
+        axios.post('/api/total',{section:nav.state.section})
             .then((result) => {
                 console.log('data herer',result.data);
                 setData(result.data)

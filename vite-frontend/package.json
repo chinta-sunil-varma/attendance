@@ -7,15 +7,17 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "update":"vite build --watch"
+    "update": "vite build --watch"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.10",
+    "@mui/x-data-grid": "^6.0.3",
     "axios": "^1.3.4",
     "chart.js": "^4.2.1",
+    "https": "^1.0.0",
     "papaparse": "^5.4.0",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",

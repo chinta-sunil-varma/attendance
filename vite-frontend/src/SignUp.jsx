@@ -40,7 +40,7 @@ export default function SignUp() {
       password: data.get('password'),
     });
 
-    axios.post('http://localhost:5000/signup',{
+    axios.post('/api/signup',{
       firstName:data.get('firstName'),
       lastName:data.get('lastName'),
       email: data.get('email'),
