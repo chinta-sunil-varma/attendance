@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
 
 import { Attendance_copy } from './Attendance_copy'
+import { DataTable } from './DataTable'
 import { Dummy } from './Dummy'
 import { Home } from './Home'
 import SignInSide from './SignInSide'
@@ -20,6 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         {/* <Route  path='/signin' element={<SignInSide></SignInSide>} ></Route>
         <Route  path='/signup' element={<SignUp></SignUp>} ></Route> */}
         <Route path="/attendance" element={<Attendance_copy/>} />
+        <Route path="/d" element={<DataTable/>} />
     </Routes>
 </BrowserRouter>
 

@@ -5,7 +5,7 @@ const session = require('express-session')
 const bcrypt = require('bcrypt')
 const ejs = require('ejs')
 const uuidv4 = require('uuid')
-const { studentModel, registerModel, classModel } = require('./models');
+const { studentModel, registerModel, classModel, attendanceModel } = require('./models');
 
 const MongoStore = require('connect-mongo');
 
@@ -60,22 +60,36 @@ const middleware = (req, res, next) => {
     }
     else {
         res.send({ message: 'not authorized try again' })
+        res.redirect('/api/signin')
         return;
     }
 }
+mongoose.connect(process.env.MONGO, (err) => {
+    if (err) {
+        console.log('error has occured connecting to db!')
 
+    }
+    else {
+        console.log('connected to db')
 
+    }
+})
 
+app.get('/', (req, res) => {
+    res.redirect('/api/signin')
+})
 
 
 app.get('/api/signin', (req, res) => {
     console.log('touched')
-    res.sendFile(path.join(__dirname, 'frontend', 'signin.html'))
+    // res.sendFile(path.join(__dirname, 'frontend', 'signin.html'))
+    res.render('signin.ejs', { status: { error: false } })
 })
 app.get('/api/signup', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'signup.html'))
+    // res.sendFile(path.join(__dirname, 'frontend', 'signup.html'))
+    res.render('signup.ejs', { status: { error: false } })
 })
-app.get('/welcome', (req, res) => {
+app.get('/welcome', middleware, (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'index.html'))
 
 })
@@ -106,13 +120,23 @@ app.post('/api/signup', async (req, res) => {
         obj.email = req.body.email
         obj.password = hash
         obj.uid = uuidv4.v4()
+        if(obj.email.match("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$")==null)
+        {
+            res.render('signup.ejs',{status:{error:true,message:'not a valid email!'}})
+        }
+        try {
+            registerModel.insertMany(obj).then((result) => {
+                console.log('inserted succesfuly reigst', result)
+                res.redirect('/api/signin')
+            }).catch((err) => {
+                // console.log('err ', err)
+                res.render('signup',{status:{error:true,message:'account already exists!'}})
+            })
 
-        registerModel.insertMany(obj).then((result) => {
-            console.log('inserted succesfuly reigst', result)
-            res.redirect('api/signin')
-        }).catch((err) => {
-            console.log('err ', err)
-        })
+        } catch (error) {
+             
+              res.render('signup.ejs',{status:{error:true,message:'problem in connecting the database!'}})
+        }
 
 
 
@@ -123,11 +147,13 @@ app.post('/api/signup', async (req, res) => {
 app.post('/api/signin', async (req, res) => {
     const result = await registerModel.find({ email: req.body.email })
     console.log(result[0]);
+    if(result[0]==null)
+    return res.render('signin',{status:{error:true,message:'no user exists please signup!'}})
     bcrypt.compare(req.body.password, result[0].password, function (err, result1) {
         // result == true
         if (err) {
             console.log('something error ', err)
-            return;
+            return res.render('signin',{status:{error:true,message:'no user exists please signup!(1)'}})
         }
         if (result1) {
             req.session.active = true;
@@ -140,21 +166,24 @@ app.post('/api/signin', async (req, res) => {
             res.redirect('/welcome')
         }
         else {
+           res.render('signin',{status:{error:true,message:'invalid credentials!'}})
             console.log('passwrod failed');
         }
     });
 })
-app.post('/api/upload', (req, res) => {
-    console.log("🚀 ~ file: index.js:143 ~ req:", req.body)
+app.post('/api/upload', middleware, (req, res) => {
+    // console.log("🚀 ~ file: index.js:143 ~ req:", req.body)
     const data = req.body.data
     var byRoll = data.slice(0);
     byRoll.sort(function (a, b) {
         return a.ID - b.ID;
     });
-  
-    classModel.insertMany({ class: req.body.section, uid: req.session.uid, data: byRoll }).then
-        ((res) => {
-            console.log("🚀 ~ file: index.js:152 ~ app.post ~ res: after isertion", res)
+
+    classModel.insertMany({ class: req.body.class, subject: req.body.subject, uid: req.session.uid, data: byRoll }).then
+        ((result) => {
+            // console.log("🚀 ~ file: index.js:152 ~ app.post ~ res: after isertion", res)
+            console.log('inserted into db')
+            res.send({ status: true, message: "inserted in db" })
 
         }).catch((err) => {
             console.log("🚀 ~ file: index.js:149 ~ app.post ~ err:", err)
@@ -166,14 +195,15 @@ app.post('/api/upload', (req, res) => {
 
 })
 //total sections user teaches shall be returned
-app.get('/api/sections', async (req, res) => {
+app.get('/api/sections', middleware, async (req, res) => {
     console.log('touched')
     const output = await classModel.find({ uid: req.session.uid })
     console.log("🚀 ~ file: index.js:162 ~ output:", output)
 
-    const send = { data: [] }
+    const send = { subject: [], data: [] }
     output.map((item) => {
         send.data.push(item.class)
+        send.subject.push(item.subject)
     })
     console.log(send)
 
@@ -182,25 +212,43 @@ app.get('/api/sections', async (req, res) => {
 
 })
 //students info by taking the section and uid of teacher
-app.post('/api/total', async (req, res) => {
+app.post('/api/total', middleware, async (req, res) => {
     console.log(req.body)
     const output = await classModel.findOne({ uid: req.session.uid, class: req.body.section })
     console.log("🚀 ~ file: index.js:181 ~ output:", output)
     res.send(output.data)
 
 
-})
-mongoose.connect(process.env.MONGO, (err) => {
-    if (err) {
-        console.log('error has occured connecting to db!')
 
-    }
-    else {
-        console.log('connected to db')
-        app.listen(5000, () => {
-            console.log('connected at port 5000')
-        })
-    }
 })
+app.post('/api/attendance/upload', middleware, async (req, res) => {
+    console.log(req.body)
+    try {
+        const result = await attendanceModel.insertMany({
+            uid: req.session.uid, subject: req.body.subject,
+            section: req.body.section, values: req.body.data,
+            date: req.body.date
+
+        })
+        if (result) {
+            res.send({ status: true, message: 'uploaded successfully' })
+        }
+        else {
+            res.send({ status: false, message: 'unable to upload' })
+        }
+    } catch (error) {
+        console.log(error)
+    }
+
+})
+
+
+
+
+app.listen(5000, () => {
+    console.log('connected at port 5000')
+
+})
+
 
 

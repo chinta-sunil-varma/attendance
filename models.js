@@ -57,6 +57,12 @@ const classSchema=new mongoose.Schema(
             type:String,
             
         },
+        subject:
+        {
+            required:true,
+            type:String,
+            
+        },
         uid:
         {
             required:true,
@@ -71,8 +77,38 @@ const classSchema=new mongoose.Schema(
         },
     }
 )
+const attendanceSchema=new mongoose.Schema(
+    {
+        uid:
+        {
+            required:true,
+            type:String
+        },
+        subject:
+        {
+            required:true,
+            type:String
+        },
+        section:
+        {
+            required:true,
+            type:String
+        },
+        values:
+        {
+            required:true,
+            type:Array
+        },
+        date:
+        {
+            type:Date,
+            required:true
+        }
+    }
+)
 const registerModel=mongoose.model('registerModel',registerSchema)
+const attendanceModel=mongoose.model('attendanceModel',attendanceSchema)
 const classModel=mongoose.model('classModel',classSchema)
 const studentModel=mongoose.model('studentModel',studentSchema,'bz')
 
-module.exports={studentModel:studentModel,registerModel:registerModel,classModel:classModel}
+module.exports={studentModel:studentModel,registerModel:registerModel,classModel:classModel,attendanceModel:attendanceModel}

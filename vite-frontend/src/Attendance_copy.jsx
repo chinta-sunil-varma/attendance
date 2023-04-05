@@ -1,13 +1,18 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import axios from 'axios'
-import { Button, Paper, Typography, Card, CardActions, CardContent, Box, Select, Alert, Accordion, AccordionSummary, AccordionDetails, Stack, ToggleButton } from '@mui/material'
+import { Button, Paper, Typography, Card, CardActions, CardContent, Box,Input, Select, Alert, Accordion, AccordionSummary, AccordionDetails, Stack, ToggleButton, InputLabel } from '@mui/material'
 // import {DesktopDatePicker} from '@mui/x-date-pickers/DesktopDatePicker'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
+import { Toaster } from './Toaster';
 // import Down from './assets/down.svg'
 ChartJS.register(ArcElement, Tooltip, Legend);
 // import Donot from './Donot';
@@ -43,7 +48,7 @@ function reducing(state, action) {
         case 'update':
             return state.map((item) => {
                 console.log('heh outside id ', item.ID);
-               
+
 
                 if (item.ID == action.payload.ID) {
                     console.log('match found!');
@@ -81,7 +86,7 @@ function reducing(state, action) {
 
 
                     }
-                   
+
 
 
 
@@ -96,11 +101,14 @@ export const Attendance_copy = () => {
 
 
     const [data, setData] = React.useState(false)
-    const [alert, setAlert] = React.useState({ status: false, message: '' })
-    const nav=useLocation()
+    // const [alert, setAlert] = React.useState({ status: false, message: '' })
+    const nav = useLocation()
+    console.log('nav is', nav)
     console.log('hi in attenddance');
     const [limit, setLimit] = React.useState(true)
     const [init, setInit] = React.useState(0)
+    const [dt, setDt] = React.useState('')
+    const secRef = useRef('')
     // const [course, setCourse] = React.useState(false)
     const [state, dispatcher] = React.useReducer(reducing, [{ 'heheboi': true, 'acount': 0, 'pcount': 0, 'prcount': 0, 'lcount': 0 }])
 
@@ -142,8 +150,12 @@ export const Attendance_copy = () => {
             if (init + 1 >= data.length) {
                 console.log('inside false stat');
                 setLimit(false)
+                setInit(init + 1)
 
-            } else { setInit(init + 1) }
+            } else {
+                 setInit(init + 1) 
+                
+                }
 
         }
     }
@@ -151,7 +163,7 @@ export const Attendance_copy = () => {
         console.log(e.target.name);
         console.log(e.target.value);
         const { name, value } = e.target
-        console.log('value here',value)
+        console.log('value here', value)
         dispatcher({ type: 'update', payload: { ID: name, STATUS: value } })
 
     }
@@ -164,6 +176,24 @@ export const Attendance_copy = () => {
         state.map(function (row) {
             console.log('values here', row)
             row = Object.values(row)
+            //if the values are p pr a change em
+            switch (row[row.length - 1]) {
+                case "P":
+                    row[row.length - 1] = "PRESENT"
+                    break;
+                case "PR":
+                    row[row.length - 1] = "PERMISSION"
+                    break;
+                case "A":
+                    row[row.length - 1] = "ABSENT"
+                    break;
+                case "L":
+                    row[row.length - 1] = "LATE"
+                    break;
+
+                default:
+                    break;
+            }
             csv += row.join(',');
             csv += "\n";
         });
@@ -182,10 +212,10 @@ export const Attendance_copy = () => {
 
     }
     function fetch(sec) {
-          // /api/it2
-        axios.post('/api/total',{section:nav.state.section})
+        // /api/it2
+        axios.post('/api/total', { section: nav.state.section })
             .then((result) => {
-                console.log('data herer',result.data);
+                console.log('data herer', result.data);
                 setData(result.data)
 
             }).catch((err) => {
@@ -193,6 +223,7 @@ export const Attendance_copy = () => {
             });
 
     }
+
     var dummy;
     React.useEffect(
         function initializer() {
@@ -211,33 +242,39 @@ export const Attendance_copy = () => {
     console.log(dummy)
 
 
-    // function upload_attend()
-    // {
-    //     const sec=rend.attendance.split("-")[2]
-    //     axios.post('ht tp://localhost:2555/attendance/',{  subject:rend.attendance,section:sec,date:rend.date,values:state})
-    //     .then((result) => { 
-    //         console.log(result)
-    //         setAlert({status:true,message:result.data.message})
-    //     }).catch((err) => {
-    //         console.log(err)
-    //     });
-    // }    
+    function upload_attend() {
+     
+        axios.post('/api/attendance/upload', { subject: nav.state.subject, section: nav.state.section, date: dt, values: state })
+            .then((result) => {
+                if(result.data.status){
+
+                console.log(result)
+                toast(result.data.message)
+                setAlert({ status: true, message: result.data.message })
+            }
+            else
+            {
+                toast(result.data.message)
+            }
+            }).catch((err) => {
+                console.log(err)
+                toast(err)
+            });
+    }
     return (
         <>
-            {/* <center>
-              
-                <br />
-                <Typography sx={{ display: 'inline-block', marginRight: '5px' }}>Select Class</Typography>
-                <select ref={secRef}>
-                    
-                </select>
-                <br></br>
-                <Button onClick={initializer}>set-Subject</Button></center> */}
+            <Toaster />
+           
             {data ?
                 <>
-                    {alert.status ? <Alert onClose={() => { setAlert(false) }}>{alert.message}</Alert> : null}
+                    {/* {alert.status ? <Alert onClose={() => { setAlert(false) }}>{alert.message}</Alert> : null} */}
+                    
 
-                    <Paper elevation={3} sx={{ display: 'flex', justifyContent: 'center', fontFamily: ' Gemunu Libre', fontSize: '120%', backgroundColor: '#EEEEEE' }}>
+                    <Paper elevation={3} sx={{ display: 'flex', justifyContent: 'space-between', fontFamily: ' Gemunu Libre', fontSize: '120%', backgroundColor: '#EEEEEE',alignItems:'center' }}>
+                        <Box>
+                           <Typography>Select Date</Typography>
+                    <Input type='date' value={dt} onChange={(e)=>{setDt(e.target.value)}} placeholder='select date' name='date' sx={{marginRight:'auto',marginLeft:'auto'}}/>
+                    </Box>
                         <Card  >
                             <CardContent sx={{ fontFamily: ' sans-serif', fontSize: '120%', backgroundColor: '#CBE4DE' }} >
                                 <Box display={'flex'} justifyContent={'space-between'}>
@@ -256,7 +293,7 @@ export const Attendance_copy = () => {
                             </CardActions>
                         </Card>
 
-                        {/* <Button onClick={upload_attend}> upload Attendance</Button> */}
+                        <Button onClick={upload_attend}> upload Attendance</Button>
 
 
                         <Box sx={{ position: 'relative', height: '40vh', width: '40vw' }}>
@@ -273,12 +310,12 @@ export const Attendance_copy = () => {
                             if (item.STATUS === 'A') {
 
                                 return <>
-                                
+
                                     <Box display={'flex'} justifyContent={'space-evenly'} alignItems={'center'} color={'whitesmoke'} borderColor={'black'} height='25%'
-                                    
-                                    backgroundColor={"#" + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0').toUpperCase()}
-                                    margin='0.4%'
-                                    
+
+                                        backgroundColor={"#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0').toUpperCase()}
+                                        margin='0.4%'
+
                                     >
                                         <Typography sx={{ display: 'inline', fontFamily: 'sans-serif' }}>{item.NAME}
 
@@ -286,7 +323,7 @@ export const Attendance_copy = () => {
                                         </Typography>
                                         <ToggleButton
                                             value="check"
-                                            
+
                                             onChange={() => {
                                                 state.map((obj) => {
                                                     if (obj.ID == item.ID) {
@@ -299,11 +336,11 @@ export const Attendance_copy = () => {
 
                                             sx={{
                                                 width: '5px',
-                                                marginLeft:'10px'
+                                                marginLeft: '10px'
 
                                             }}
                                         >
-                                            <DeleteForeverIcon  sx={{ color: 'wheat' , border:'0px' }} />
+                                            <DeleteForeverIcon sx={{ color: 'wheat', border: '0px' }} />
                                         </ToggleButton>
                                     </Box>
 
@@ -313,7 +350,7 @@ export const Attendance_copy = () => {
                                 </>
                             }
                         })}</Box>
-                        <hr />
+                    <hr />
                     <Typography variant='h4' fontFamily={'cursive'} display={'flex'} justifyContent={'center'}> Edit here</Typography>
                     <br />
                     <Box sx={{
