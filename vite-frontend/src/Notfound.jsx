@@ -97,7 +97,10 @@ export const Notfound = () => {
             <div class="text">
         <h1 className='h1'>404 Error</h1>  
       
-         <h3 className='h3'>Page Not Found - lets take you <a className='a' href="/api/signin">BACK</a></h3> 
+         <h3 className='h3'> 
+         <a className='a' href="/api/signin">LoginPage </a>
+         <a className='a' href="/welcome">Home page</a>
+         </h3> 
     </div>
         </div>
         

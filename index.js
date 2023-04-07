@@ -256,6 +256,7 @@ app.get('/api/logout',(req,res)=>
     req.session.destroy((err)=>
     {
         res.send({status:true})
+        return;
     })
 
 })
