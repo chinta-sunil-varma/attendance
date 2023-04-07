@@ -59,8 +59,8 @@ const middleware = (req, res, next) => {
         next();
     }
     else {
-        res.send({ message: 'not authorized try again' })
-       
+
+        res.redirect('/api/signin')
         return;
     }
 }
