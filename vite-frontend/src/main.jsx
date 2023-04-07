@@ -8,6 +8,7 @@ import { Dummy } from './Dummy'
 import { Home } from './Home'
 import SignInSide from './SignInSide'
 import SignUp from './SignUp'
+import { Notfound } from './Notfound'
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -21,7 +22,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         {/* <Route  path='/signin' element={<SignInSide></SignInSide>} ></Route>
         <Route  path='/signup' element={<SignUp></SignUp>} ></Route> */}
         <Route path="/attendance" element={<Attendance_copy/>} />
-        <Route path="/d" element={<DataTable/>} />
+        {/* <Route path="/d" element={<DataTable/>} /> */}
+        <Route path="*" element={<Notfound/>} />
     </Routes>
 </BrowserRouter>
 

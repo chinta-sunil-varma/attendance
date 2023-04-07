@@ -102,7 +102,7 @@ export const Attendance_copy = () => {
 
     const [data, setData] = React.useState(false)
     // const [alert, setAlert] = React.useState({ status: false, message: '' })
-    const nav = useLocation()
+    const   nav = useLocation()
     console.log('nav is', nav)
     console.log('hi in attenddance');
     const [limit, setLimit] = React.useState(true)
@@ -273,7 +273,7 @@ export const Attendance_copy = () => {
                     <Paper elevation={3} sx={{ display: 'flex', justifyContent: 'space-between', fontFamily: ' Gemunu Libre', fontSize: '120%', backgroundColor: '#EEEEEE',alignItems:'center' }}>
                         <Box>
                            <Typography>Select Date</Typography>
-                    <Input type='date' value={dt} onChange={(e)=>{setDt(e.target.value)}} placeholder='select date' name='date' sx={{marginRight:'auto',marginLeft:'auto'}}/>
+                    <Input type='date' value={dt} onChange={(e)=>{setDt(e.target.value)}} required placeholder='select date' name='date' sx={{marginRight:'auto',marginLeft:'auto'}}/>
                     </Box>
                         <Card  >
                             <CardContent sx={{ fontFamily: ' sans-serif', fontSize: '120%', backgroundColor: '#CBE4DE' }} >

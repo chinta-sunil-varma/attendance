@@ -108,6 +108,7 @@ app.get('/api/it2', middleware, async (req, res) => {
 
 app.post('/api/signup', async (req, res) => {
     console.log(req.body)
+
     bcrypt.hash(req.body.password, 11, function (err, hash) {
         // Store hash in your password DB.
         if (err) {
@@ -124,6 +125,7 @@ app.post('/api/signup', async (req, res) => {
         {
             res.render('signup.ejs',{status:{error:true,message:'not a valid email!'}})
         }
+        else{
         try {
             registerModel.insertMany(obj).then((result) => {
                 console.log('inserted succesfuly reigst', result)
@@ -136,7 +138,7 @@ app.post('/api/signup', async (req, res) => {
         } catch (error) {
              
               res.render('signup.ejs',{status:{error:true,message:'problem in connecting the database!'}})
-        }
+        }}
 
 
 
@@ -178,7 +180,7 @@ app.post('/api/upload', middleware, (req, res) => {
     byRoll.sort(function (a, b) {
         return a.ID - b.ID;
     });
-
+   try{
     classModel.insertMany({ class: req.body.class, subject: req.body.subject, uid: req.session.uid, data: byRoll }).then
         ((result) => {
             // console.log("🚀 ~ file: index.js:152 ~ app.post ~ res: after isertion", res)
@@ -191,12 +193,17 @@ app.post('/api/upload', middleware, (req, res) => {
 
 
         })
+    }catch(err)
+    {
+        res.send({status:false,message:'error in db try again later !'})
+    }
 
 
 })
 //total sections user teaches shall be returned
 app.get('/api/sections', middleware, async (req, res) => {
     console.log('touched')
+    try{
     const output = await classModel.find({ uid: req.session.uid })
     console.log("🚀 ~ file: index.js:162 ~ output:", output)
 
@@ -208,19 +215,51 @@ app.get('/api/sections', middleware, async (req, res) => {
     console.log(send)
 
     res.json(send)
+}catch(err)
+{
+    res.send({status:false,message:'error in db try again later !'})
+}
 
 
 })
 //students info by taking the section and uid of teacher
 app.post('/api/total', middleware, async (req, res) => {
     console.log(req.body)
+    try{
     const output = await classModel.findOne({ uid: req.session.uid, class: req.body.section })
     console.log("🚀 ~ file: index.js:181 ~ output:", output)
     res.send(output.data)
+    }
+    catch(err)
+    {
+        res.send({status:false,message:'error in database checkout later'})
+    }
 
 
 
 })
+
+app.get('/api/logged',(req,res)=>
+{
+    if (req.session.active) {
+        res.send({status:true, message: ' authorized' })
+    }
+    else {
+        res.send({status:false, message: 'not authorized try again' })
+        
+        return;
+    }
+
+})
+app.get('/api/logout',(req,res)=>
+{
+    req.session.destroy((err)=>
+    {
+        res.send({status:true})
+    })
+
+})
+
 app.post('/api/attendance/upload', middleware, async (req, res) => {
     console.log(req.body)
     try {
@@ -238,11 +277,15 @@ app.post('/api/attendance/upload', middleware, async (req, res) => {
         }
     } catch (error) {
         console.log(error)
+        res.send({ status: false, message: 'Date not selected!' })
     }
 
 })
 
-
+app.get('*',(req,res)=>
+{
+    res.render('notfound.ejs')
+})
 
 
 app.listen(5000, () => {
